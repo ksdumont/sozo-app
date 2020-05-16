@@ -49,9 +49,9 @@ class App extends Component {
   render() {
     console.log(this.state);
     return (
-      <div className="App">
+      <div className="App container">
         <a href="http://localhost:8888">
-          <button>Login With Spotify</button>
+          <button className="btn btn-primary">Login With Spotify</button>
         </a>
         <div>Now Playing: {this.state.nowPlaying.name}</div>
         <div>
