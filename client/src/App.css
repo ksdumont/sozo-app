@@ -14,3 +14,9 @@
 #spotify-login {
   margin: 40vh auto;
 }
+.search-track {
+  margin: 30vh auto;
+}
+input[placeholder] {
+  text-align: center;
+}
