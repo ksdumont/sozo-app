@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import "./App.css";
-import SearchForm from "./components/SearchForm";
+// import SearchForm from "./components/SearchForm";
 
 import SpotifyWebApi from "spotify-web-api-js";
 const spotifyApi = new SpotifyWebApi();
@@ -17,6 +17,8 @@ class App extends Component {
 
     this.state = {
       loggedIn: token ? true : false,
+      userName: "",
+      recentlyPlayedTracks: [],
     };
   }
   getHashParams() {
@@ -32,9 +34,35 @@ class App extends Component {
     return hashParams;
   }
 
-  searchTrack() {}
+  getUser() {
+    spotifyApi.getMe().then((res) => {
+      this.setState({
+        userName: res.display_name,
+      });
+    });
+  }
+  getRecentlyPlayedTracks() {
+    spotifyApi.getMyRecentlyPlayedTracks().then((res) => {
+      this.setState({
+        recentlyPlayedTracks: res.items,
+      });
+    });
+  }
 
-  getAudioAnalysis() {}
+  getAudioFeaturesofRecentlyPlayedTracks = () => {
+    const recentlyPlayedTrackIds = [
+      ...this.state.recentlyPlayedTracks.map((i) => i.track.id),
+    ];
+
+    spotifyApi.getAudioFeaturesForTracks(recentlyPlayedTrackIds).then((res) => {
+      console.log(res);
+    });
+  };
+
+  componentDidMount() {
+    this.getUser();
+    this.getRecentlyPlayedTracks();
+  }
 
   render() {
     return (
@@ -48,7 +76,15 @@ class App extends Component {
         ) : (
           ""
         )}
-        {this.state.loggedIn && <SearchForm />}
+        {this.state.userName ? <h2>Welcome {this.state.userName}</h2> : ""}
+        {this.state.loggedIn && (
+          <button
+            className="btn btn-primary"
+            onClick={this.getAudioFeaturesofRecentlyPlayedTracks}
+          >
+            Get Audio Features of Your Recently Played Tracks
+          </button>
+        )}
       </div>
     );
   }
