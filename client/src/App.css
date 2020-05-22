@@ -16,10 +16,10 @@
 }
 h2 {
   margin-top: 10px;
+  text-transform: uppercase;
+  color: blue;
 }
-.search-track {
-  margin: 30vh auto;
-}
+
 input[placeholder] {
   text-align: center;
 }

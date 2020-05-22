@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import "./App.css";
-// import SearchForm from "./components/SearchForm";
+import Navbar from "./components/Navbar";
+import DisplayAudioFeatures from "./components/DisplayAudioFeatures";
 
 import SpotifyWebApi from "spotify-web-api-js";
 const spotifyApi = new SpotifyWebApi();
@@ -19,6 +20,7 @@ class App extends Component {
       loggedIn: token ? true : false,
       userName: "",
       recentlyPlayedTracks: [],
+      audioFeatures: [],
     };
   }
   getHashParams() {
@@ -55,7 +57,9 @@ class App extends Component {
     ];
 
     spotifyApi.getAudioFeaturesForTracks(recentlyPlayedTrackIds).then((res) => {
-      console.log(res);
+      this.setState({
+        audioFeatures: res.audio_features,
+      });
     });
   };
 
@@ -67,6 +71,7 @@ class App extends Component {
   render() {
     return (
       <div className="App container">
+        <Navbar />
         {!this.state.loggedIn ? (
           <a href="http://localhost:8888">
             <button id="spotify-login" className="btn btn-primary">
@@ -85,6 +90,9 @@ class App extends Component {
             Get Audio Features of Your Recently Played Tracks
           </button>
         )}
+        <div className="audio-features">
+          <DisplayAudioFeatures audioFeatures={this.state.audioFeatures} />
+        </div>
       </div>
     );
   }
