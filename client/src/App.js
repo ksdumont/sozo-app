@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 import "./App.css";
 import Navbar from "./components/Navbar";
-import DisplayAudioFeatures from "./components/DisplayAudioFeatures";
+
+import Track from "./components/Track";
 
 import SpotifyWebApi from "spotify-web-api-js";
 const spotifyApi = new SpotifyWebApi();
@@ -20,7 +21,6 @@ class App extends Component {
       loggedIn: token ? true : false,
       userName: "",
       recentlyPlayedTracks: [],
-      audioFeatures: [],
     };
   }
   getHashParams() {
@@ -51,18 +51,6 @@ class App extends Component {
     });
   }
 
-  getAudioFeaturesofRecentlyPlayedTracks = () => {
-    const recentlyPlayedTrackIds = [
-      ...this.state.recentlyPlayedTracks.map((i) => i.track.id),
-    ];
-
-    spotifyApi.getAudioFeaturesForTracks(recentlyPlayedTrackIds).then((res) => {
-      this.setState({
-        audioFeatures: res.audio_features,
-      });
-    });
-  };
-
   componentDidMount() {
     this.getUser();
     this.getRecentlyPlayedTracks();
@@ -81,17 +69,32 @@ class App extends Component {
         ) : (
           ""
         )}
-        {this.state.userName ? <h2>Welcome {this.state.userName}</h2> : ""}
-        {this.state.loggedIn && (
-          <button
-            className="btn btn-primary"
-            onClick={this.getAudioFeaturesofRecentlyPlayedTracks}
-          >
-            Get Audio Features of Your Recently Played Tracks
-          </button>
+        {this.state.userName ? (
+          <>
+            <h1>Welcome {this.state.userName}</h1>
+            <h4>Here are some of your recently played tracks on Spotify</h4>
+          </>
+        ) : (
+          ""
         )}
-        <div className="audio-features">
-          <DisplayAudioFeatures audioFeatures={this.state.audioFeatures} />
+        <div className="recently-played-tracks">
+          {this.state.loggedIn &&
+            this.state.recentlyPlayedTracks.map((item) => {
+              let title = item.track.name;
+              let artist = item.track.artists[0].name;
+              let image = item.track.album.images[1].url;
+              let key = item.played_at;
+              let id = item.track.id;
+              return (
+                <Track
+                  key={key}
+                  title={title}
+                  artist={artist}
+                  image={image}
+                  id={id}
+                />
+              );
+            })}
         </div>
       </div>
     );
